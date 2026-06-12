@@ -1,27 +1,29 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import { useCookies } from "react-cookie";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export type AuthContextType = {
+export interface AuthContextType {
   cookies: { token?: string };
   isAuthenticated: boolean;
   login: (token: string) => void;
   logout: () => void;
-};
+}
 
-type Props = {
+interface Props {
   children: JSX.Element | JSX.Element[];
-};
+}
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider = ({ children }: Props) => {
   const navigate = useNavigate();
   const [cookies, setCookies, removeCookie] = useCookies();
-  const [isAuthenticated, setIsAuthenticated] = useState(cookies['token']?true:false);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    cookies["token"] ? true : false
+  );
 
   const login = (token: string) => {
-    console.log(token, "token")
+    console.log(token, "token");
     setCookies("token", token);
     setIsAuthenticated(true);
     navigate("/");
@@ -49,10 +51,10 @@ const AuthProvider = ({ children }: Props) => {
 export default AuthProvider;
 
 export const useAuth = (): AuthContextType | null => {
-  const context=useContext(AuthContext) 
+  const context = useContext(AuthContext);
   if (!context) {
     return null;
   }
- 
-  return context ;
+
+  return context;
 };

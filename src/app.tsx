@@ -11,43 +11,50 @@ import { useCookies } from "react-cookie";
 import EntriesPage from "./pages/records/entries";
 import AllEntriesPage from "./pages/records/date-record";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
- 
+// cSpell:ignore toastify
+import "react-toastify/dist/ReactToastify.css";
+
 import AllManagerEntriesPage from "./pages/records/manager-records";
 import ManagerEntriesPage from "./pages/records/managerEntries";
 import ManagerDashboardPage from "./pages/managerDashboard";
 import Loading from "./components/loading";
 const App = () => {
-  const [cookies]=useCookies();
+  const [cookies] = useCookies();
   return (
-   
     <AuthProvider>
-    <ToastContainer />
-    <Flowbite theme={{ theme }}>
-
+      <ToastContainer />
+      <Flowbite theme={{ theme }}>
         <Routes>
-          <Route path="/" element={cookies['token']?<DashboardPage/>:<Navigate to="/auth/sign-in"/>} index />
+          <Route
+            path="/"
+            element={
+              cookies["token"] ? (
+                <DashboardPage />
+              ) : (
+                <Navigate to="/auth/sign-in" />
+              )
+            }
+            index
+          />
           <Route path="/auth/sign-in" element={<SignInPage />} />
-          <Route path="/auth/manager-dashboard" element={<ManagerDashboardPage />} />
+          <Route
+            path="/auth/manager-dashboard"
+            element={<ManagerDashboardPage />}
+          />
           <Route path="/auth/sign-up" element={<SignUpPage />} />
           <Route path="/loading" element={<Loading />} />
+          <Route path="/all-entries" element={<AllEntriesPage />} />
+          <Route path="/all-manager" element={<AllManagerEntriesPage />} />
+          <Route path="/entries-by-date/:date" element={<EntriesPage />} />
           <Route
-            path="/all-entries"
-            element={<AllEntriesPage />}
+            path="/managerEntries-by-date/:date"
+            element={<ManagerEntriesPage />}
           />
-          <Route
-            path="/all-manager"
-            element={<AllManagerEntriesPage />}
-          />
-          <Route path='/entries-by-date/:date' element={<EntriesPage/>} />
-          <Route path='/managerEntries-by-date/:date' element={<ManagerEntriesPage/>} />
           <Route path="/users/list" element={<UserListPage />} />
         </Routes>
-      
-    </Flowbite>
+      </Flowbite>
     </AuthProvider>
- 
-  )
-}
+  );
+};
 
-export default App
+export default App;

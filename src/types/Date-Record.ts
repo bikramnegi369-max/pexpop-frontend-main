@@ -1,7 +1,7 @@
-import EntryInputs from "./Entry";
+import type EntryInputs from "./Entry";
 
 export interface DateRecord {
-    date:string,
-    entries: EntryInputs[],
-    costing_inr: number,
+  date: string;
+  entries: EntryInputs[];
+  costing_inr: number;
 }

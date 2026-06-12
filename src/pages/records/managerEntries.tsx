@@ -1,15 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import {
-  Breadcrumb,
-  Table,
-} from "flowbite-react";
+import { Breadcrumb, Table } from "flowbite-react";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
-import {
-  HiHome,
-} from "react-icons/hi";
+import { HiHome } from "react-icons/hi";
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
-import 'react-calendar/dist/Calendar.css';
+import "react-calendar/dist/Calendar.css";
 import dateFormat from "dateformat";
 import { api } from "../../services/api";
 import { useParams } from "react-router";
@@ -28,24 +23,22 @@ const ManagerEntriesPage: FC = function () {
   console.log(formatedDate + "date");
 
   const getEntries = async () => {
-    console.log("entreis")
+    console.log("entreis");
     const res = await api.get(`/manager/entries-by-date?date=${formatedDate}`);
-    if (res.data.status === 'success') {
+    if (res.data.status === "success") {
       setEntries(res.data.dateRecord.entries);
       // const total_sale_inr_for_date = res.data?.dateRecord?.entries?.reduce((a: number, b: any) => (a + b.total_sale_inr), 0);
       // const loss=res.data.data.reduce((a: any, b: any) =>b.profit<0?(a + b.profit):a, 0);
       // const total_revenue = res.data?.dateRecord?.entries?.reduce((a: number, b: any) => (a + b.revenue), 0);
       // setCosting(res.data.dateRecord?.costing_inr)
-    //   setRevnue(total_sale_inr_for_date - res.data.dateRecord?.costing_inr);
-    //   setProfit(total_revenue - res.data.dateRecord?.costing_inr);
+      //   setRevnue(total_sale_inr_for_date - res.data.dateRecord?.costing_inr);
+      //   setProfit(total_revenue - res.data.dateRecord?.costing_inr);
+    } else {
     }
-    else {
-      ;
-    }
-  }
+  };
   useEffect(() => {
     getEntries();
-  }, [])
+  }, []);
 
   return (
     <NavbarSidebarLayout isFooter={false}>
@@ -62,9 +55,8 @@ const ManagerEntriesPage: FC = function () {
               <Breadcrumb.Item href="/e-commerce/products">
                 Entries
               </Breadcrumb.Item>
-
             </Breadcrumb>
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl flex justify-between">
+            <h1 className="flex justify-between text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
               Entries - {dateFormat(date, "dd mmm yyyy")}
               {/* <div className="flex gap-4">
                 <button type="button" className="focus:outline-none text-white bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-green-800">Costing :{costing.toLocaleString("en-US")}</button>
@@ -76,11 +68,8 @@ const ManagerEntriesPage: FC = function () {
           <div className="block items-center sm:flex">
             <SearchManagerEntries setEntries={setEntries} />
 
-            <div className="flex w-full items-center sm:justify-end gap-4">
-
+            <div className="flex w-full items-center gap-4 sm:justify-end">
               <AddManagerEntryModal getEntries={getEntries} />
-
-
             </div>
           </div>
         </div>
@@ -94,30 +83,18 @@ const ManagerEntriesPage: FC = function () {
           </div>
         </div>
       </div>
-
     </NavbarSidebarLayout>
   );
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-type ProductTableProps = {
-  entries: any[],
-  getEntries: any
+interface ProductTableProps {
+  entries: any[];
+  getEntries: any;
 }
-const ProductsTable: FC<ProductTableProps> = function ({ entries, getEntries }: ProductTableProps) {
-
-
+const ProductsTable: FC<ProductTableProps> = function ({
+  entries,
+  getEntries,
+}: ProductTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 5;
@@ -130,12 +107,12 @@ const ProductsTable: FC<ProductTableProps> = function ({ entries, getEntries }: 
     if (currentPage < totalPage) {
       setCurrentPage(currentPage + 1);
     }
-  }
+  };
   const goToPrev = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
-  }
+  };
 
   return (
     <>
@@ -162,79 +139,109 @@ const ProductsTable: FC<ProductTableProps> = function ({ entries, getEntries }: 
           <Table.HeadCell>Action</Table.HeadCell>
         </Table.Head>
         <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-          {currentItems.length > 0 && currentItems.map((entry: any) =>
-            <Table.Row className="hover:bg-gray-100 dark:hover:bg-gray-700">
-              {/* <Table.Cell>
+          {currentItems.length > 0 &&
+            currentItems.map((entry: any) => (
+              <Table.Row className="hover:bg-gray-100 dark:hover:bg-gray-700">
+                {/* <Table.Cell>
                 <Checkbox />
               </Table.Cell> */}
+                <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                  <div className="text-base font-semibold text-gray-900 dark:text-white">
+                    {dateFormat(entry.date, "dd mmm yyyy")}
+                  </div>
+                </Table.Cell>
+                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                  {entry.name}
+                </Table.Cell>
+                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                  {entry.sale1}
+                </Table.Cell>
+                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                  {entry.rate1}
+                </Table.Cell>
+                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                  {entry.sale2}
+                </Table.Cell>
+                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                  {entry.rate2}
+                </Table.Cell>
+                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                  {entry.sale3}
+                </Table.Cell>
+                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                  {entry.rate3}
+                </Table.Cell>
+                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                  {entry.total_sale_usd}
+                </Table.Cell>
+                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                  {entry.total_sale_inr}
+                </Table.Cell>
+
+                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                  {entry.payment_status == "paid" ? (
+                    <span className="rounded-md bg-green-500 px-3 py-1.5 text-sm text-white">
+                      Paid
+                    </span>
+                  ) : (
+                    <span className="rounded-md bg-red-500 px-3 py-1.5 text-sm text-white">
+                      Pending
+                    </span>
+                  )}
+                </Table.Cell>
+
+                <Table.Cell className="space-x-2 whitespace-nowrap p-4">
+                  <div className="flex items-center gap-x-3">
+                    <EditManagerEntryModal
+                      entry={entry}
+                      entryId={entry._id}
+                      getEntries={getEntries}
+                    />
+                    <DeleteManagerEntryModal
+                      entryId={entry._id}
+                      getEntries={getEntries}
+                    />
+                  </div>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          {currentItems.length === 0 && (
+            <Table.Row className="hover:bg-gray-100 dark:hover:bg-gray-700">
               <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                <div className="text-base font-semibold text-gray-900 dark:text-white">
-                  {dateFormat(entry.date, "dd mmm yyyy")}
-                </div>
-
-              </Table.Cell>
-              <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                {entry.name}
-              </Table.Cell>
-              <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                {entry.sale1}
-              </Table.Cell>
-              <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                {entry.rate1}
-              </Table.Cell>
-              <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                {entry.sale2}
-              </Table.Cell>
-              <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                {entry.rate2}
-              </Table.Cell>
-              <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                {entry.sale3}
-              </Table.Cell>
-              <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                {entry.rate3}
-              </Table.Cell>
-              <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                {entry.total_sale_usd}
-              </Table.Cell>
-              <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                {entry.total_sale_inr}
-              </Table.Cell>
-
-              <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                {entry.payment_status == "paid" ? <span className="px-3 py-1.5 bg-green-500 rounded-md text-sm text-white">Paid</span> : <span className="px-3 py-1.5 bg-red-500 text-sm rounded-md text-white">Pending</span>}
-              </Table.Cell>
-
-              <Table.Cell className="space-x-2 whitespace-nowrap p-4">
-                <div className="flex items-center gap-x-3">
-                  <EditManagerEntryModal entry={entry} entryId={entry._id} getEntries={getEntries} />
-                  <DeleteManagerEntryModal entryId={entry._id} getEntries={getEntries} />
+                <div className="text-center text-base font-semibold text-gray-900 dark:text-white">
+                  No Entries Found
                 </div>
               </Table.Cell>
             </Table.Row>
           )}
-          {currentItems.length === 0 && <Table.Row className="hover:bg-gray-100 dark:hover:bg-gray-700">
-            <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-              <div className="text-base text-center font-semibold text-gray-900 dark:text-white">
-                No Entries Found
-              </div>
-            </Table.Cell>
-          </Table.Row>}
-
-
         </Table.Body>
-
       </Table>
-      {currentItems.length > itemsPerPage && <div className="text-center gap-4 flex justify-center pb-5 pt-5">
-        <button className="p-2 px-5 bg-primary-500 rounded-xl" onClick={() => goToPrev()}>
-          Prev
-        </button>
-        {Array.from(Array(totalPage).keys()).map((index) =>
-          <p className={`mt-2 cursor-pointer rounded-full px-3 flex justify-center items-center py-0.1 ${currentPage == index + 1 && "bg-primary-400"}`} onClick={() => setCurrentPage(index + 1)}>{index + 1}</p>)}
-        <button className="p-2 px-5 bg-primary-500 rounded-xl" onClick={() => goToNext()}>
-          Next
-        </button>
-      </div>}
+      {currentItems.length > itemsPerPage && (
+        <div className="flex justify-center gap-4 py-5 text-center">
+          <button
+            className="rounded-xl bg-primary-500 p-2 px-5"
+            onClick={() => goToPrev()}
+          >
+            Prev
+          </button>
+          {Array.from(Array(totalPage).keys()).map((index) => (
+            <p
+              className={`py-0.1 mt-2 flex cursor-pointer items-center justify-center rounded-full px-3 ${
+                currentPage == index + 1 && "bg-primary-400"
+              }`}
+              onClick={() => setCurrentPage(index + 1)}
+            >
+              {index + 1}
+            </p>
+          ))}
+          <button
+            className="rounded-xl bg-primary-500 p-2 px-5"
+            onClick={() => goToNext()}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </>
   );
 };

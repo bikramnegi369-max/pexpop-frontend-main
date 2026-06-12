@@ -64,11 +64,16 @@
   @apply bg-white dark:bg-gray-700 shadow-lg rounded-lg border-0 text-left !important;
 }
 
-.svgMap-tooltip .svgMap-tooltip-content-container .svgMap-tooltip-flag-container {
+.svgMap-tooltip
+  .svgMap-tooltip-content-container
+  .svgMap-tooltip-flag-container {
   @apply inline-block mr-2 text-left border-0 p-0 !important;
 }
 
-.svgMap-tooltip .svgMap-tooltip-content-container .svgMap-tooltip-flag-container .svgMap-tooltip-flag {
+.svgMap-tooltip
+  .svgMap-tooltip-content-container
+  .svgMap-tooltip-flag-container
+  .svgMap-tooltip-flag {
   @apply inline-block border-0 h-4 p-0 !important;
 }
 
@@ -133,7 +138,7 @@
   @apply rounded-lg border border-gray-200 bg-white text-sm font-medium px-4 py-2 text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-2 focus:ring-primary-700 focus:text-primary-700 !important;
 }
 
-.fc-direction-ltr .fc-toolbar>*> :not(:first-child) {
+.fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
   @apply mx-2 !important;
 }
 
