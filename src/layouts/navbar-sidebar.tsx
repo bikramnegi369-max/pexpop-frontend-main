@@ -13,7 +13,7 @@ const NavbarSidebarLayout: FC<PropsWithChildren<NavbarSidebarLayoutProps>> =
     return (
       <>
         <Navbar onToggleSidebar={() => setSidebarOpen(!isSidebarOpen)} />
-        <div className="flex items-start">
+        <div className="flex min-h-screen items-start">
           <Sidebar isOpen={isSidebarOpen} setOpen={setSidebarOpen} />
           <MainContent isFooter={isFooter}>{children}</MainContent>
         </div>
@@ -26,13 +26,15 @@ const MainContent: FC<PropsWithChildren<NavbarSidebarLayoutProps>> = function ({
   isFooter,
 }) {
   return (
-    <main className="relative h-full w-full overflow-y-auto bg-gray-50 pt-16 dark:bg-gray-900 lg:ml-64">
-      {children}
-      {isFooter && (
-        <div className="mx-4 mt-4">
-          <MainContentFooter />
-        </div>
-      )}
+    <main className="min-h-screen w-full overflow-y-auto bg-gray-50 pt-20 dark:bg-gray-900 lg:ml-64">
+      <div className="mx-auto max-w-screen-2xl p-4 sm:p-6 lg:p-8">
+        {children}
+        {isFooter && (
+          <div className="mx-4 mt-8">
+            <MainContentFooter />
+          </div>
+        )}
+      </div>
     </main>
   );
 };

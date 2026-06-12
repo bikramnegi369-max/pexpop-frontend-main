@@ -35,9 +35,9 @@ const ExampleSidebar: FC<SidebarProps> = function ({ isOpen, setOpen }) {
       )}
 
       <aside
-        className={`fixed left-0 top-0 z-50 flex h-full w-64 shrink-0 flex-col transition-transform duration-300 lg:z-20 lg:translate-x-0 lg:pt-16 ${
+        className={`fixed left-0 top-0 z-50 flex h-full w-64 shrink-0 flex-col transition-transform duration-300 lg:z-20 lg:translate-x-0 lg:pt-20 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        } lg:shadow-none`}
         aria-label="Sidebar"
       >
         <Sidebar className="h-full border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">

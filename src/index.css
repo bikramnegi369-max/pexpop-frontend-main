@@ -195,3 +195,135 @@
   border-radius: 10px;
   box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.2);
 }
+
+/* react-date-range dark mode overrides */
+.dark .rdrCalendarWrapper,
+.dark .rdrDateRangeWrapper,
+.dark .rdrDateRangePickerWrapper {
+  background-color: #1f2937 !important;
+  color: #fff !important;
+}
+
+.dark .rdrMonth,
+.dark .rdrMonthAndYearWrapper,
+.dark .rdrMonthAndYearPickers {
+  background-color: #1f2937 !important;
+  color: #fff !important;
+}
+
+.dark .rdrMonthAndYearPickers select {
+  color: #fff !important;
+  background-color: #374151 !important;
+}
+
+.dark .rdrDateDisplayWrapper {
+  background-color: #374151 !important;
+}
+
+.dark .rdrDateDisplayItem {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .rdrDateDisplayItem input {
+  color: #fff !important;
+}
+
+.dark .rdrDayNumber span {
+  color: #d1d5db !important;
+}
+
+.dark .rdrDayPassive .rdrDayNumber span {
+  color: #6b7280 !important;
+}
+
+.dark .rdrDayDisabled {
+  background-color: transparent !important;
+}
+
+.dark .rdrDayDisabled .rdrDayNumber span {
+  color: #4b5563 !important;
+}
+
+.dark .rdrWeekDay {
+  color: #9ca3af !important;
+}
+
+.dark .rdrMonthPicker select,
+.dark .rdrYearPicker select {
+  color: #fff !important;
+  background-color: #374151 !important;
+}
+
+.dark .rdrPprevButton,
+.dark .rdrNextButton {
+  background-color: #374151 !important;
+}
+
+.dark .rdrPprevButton i,
+.dark .rdrNextButton i {
+  border-color: transparent #d1d5db transparent transparent !important;
+}
+
+.dark .rdrNextButton i {
+  border-color: transparent transparent transparent #d1d5db !important;
+}
+
+.dark .rdrInRange {
+  color: #1d4ed8 !important;
+}
+
+.dark .rdrDayToday .rdrDayNumber span:after {
+  background: #60a5fa !important;
+}
+
+.dark .rdrDefinedRangesWrapper {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark .rdrStaticRange {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #d1d5db !important;
+}
+
+.dark .rdrStaticRange:hover .rdrStaticRangeLabel,
+.dark .rdrStaticRange:focus .rdrStaticRangeLabel {
+  background-color: #374151 !important;
+}
+
+.dark .rdrInputRangeInput {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #fff !important;
+}
+
+/* hide empty defined ranges wrapper when staticRanges and inputRanges are both empty */
+.rdrDateRangePickerWrapper
+  .rdrDefinedRangesWrapper:has(
+    > .rdrStaticRanges:empty + .rdrInputRanges:empty
+  ) {
+  display: none !important;
+}
+
+/* bottom sheet slide-up animation */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.bottom-sheet-enter {
+  animation: slideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* make date range picker fill its container width on mobile */
+.rdrCalendarWrapper {
+  width: 100% !important;
+}
+.rdrMonth {
+  width: 100% !important;
+}

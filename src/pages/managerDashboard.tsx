@@ -2,150 +2,171 @@ import { useState, type FC, useEffect } from "react";
 import NavbarSidebarLayout from "../layouts/navbar-sidebar";
 import { api } from "../services/api";
 import dateFormat from "dateformat";
-import { DateRangePicker } from "react-date-range";
-import { Label, TextInput } from "flowbite-react";
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
+import DateRangeFilter from "../components/DateRangeFilter";
+import {
+  HiCurrencyDollar,
+  HiCurrencyRupee,
+  HiReceiptTax,
+} from "react-icons/hi";
+
+interface DateRecord {
+  total_sale_usd: number;
+  total_sale_inr: number;
+  costing_inr: number;
+}
+
+function getMonthRange(year: number, month: number) {
+  const m = month - 1;
+  const fmt = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate()
+    ).padStart(2, "0")}`;
+  return {
+    firstDay: fmt(new Date(year, m, 1)),
+    lastDay: fmt(new Date(year, m + 1, 0)),
+  };
+}
+
 const ManagerDashboardPage: FC = function () {
-  const [dateRecords, setDateRecords] = useState<any[]>([]);
-  function getFirstAndLastDayOfMonth(year: number, month: number) {
-    month--;
-
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-
-    const formatDate = (date: Date) =>
-      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-        2,
-        "0"
-      )}-${String(date.getDate()).padStart(2, "0")}`;
-
-    return {
-      firstDay: formatDate(firstDay),
-      lastDay: formatDate(lastDay),
-    };
-  }
   const today = new Date();
-  const { firstDay, lastDay } = getFirstAndLastDayOfMonth(
+  const { firstDay, lastDay } = getMonthRange(
     today.getFullYear(),
     today.getMonth() + 1
   );
-  const fetchDashboardDetails = async () => {
-    const res = await api.get(
-      `/manager/date-by-date-range/?from=${selectionRange.startDate}&to=${selectionRange.endDate}`
-    );
-    if (res.data.status === "success") {
-      setDateRecords(res.data.data);
-    } else {
-      setDateRecords([]);
-    }
-  };
-  const [showDateRangeFilter, setShowDateRangeFilter] = useState(false);
+
+  const [dateRecords, setDateRecords] = useState<DateRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectionRange, setSelectionRange] = useState({
     startDate: new Date(firstDay),
     endDate: new Date(lastDay),
     key: "selection",
   });
 
-  console.log(selectionRange);
   useEffect(() => {
-    fetchDashboardDetails();
+    const fetch = async () => {
+      setLoading(true);
+      try {
+        const from = dateFormat(selectionRange.startDate, "yyyy-mm-dd");
+        const to = dateFormat(selectionRange.endDate, "yyyy-mm-dd");
+        const res = await api.get(
+          `/manager/date-by-date-range/?from=${from}&to=${to}`
+        );
+        setDateRecords(res.data.status === "success" ? res.data.data : []);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetch();
   }, [selectionRange.startDate, selectionRange.endDate]);
-  const totalUSD =
-    dateRecords.length > 0
-      ? dateRecords.reduce(
-          (total, dateRecord) => total + dateRecord.total_sale_usd,
-          0
-        )
-      : 0;
-  const totalINR =
-    dateRecords.length > 0
-      ? dateRecords.reduce(
-          (total, dateRecord) => total + dateRecord.total_sale_inr,
-          0
-        )
-      : 0;
-  const totalCosting =
-    dateRecords.length > 0
-      ? dateRecords.reduce(
-          (total, dateRecord) => total + dateRecord.costing_inr,
-          0
-        )
-      : 0;
+
+  const totals = dateRecords.reduce(
+    (acc, curr) => ({
+      usd: acc.usd + curr.total_sale_usd,
+      inr: acc.inr + curr.total_sale_inr,
+      costing: acc.costing + curr.costing_inr,
+    }),
+    { usd: 0, inr: 0, costing: 0 }
+  );
 
   return (
     <NavbarSidebarLayout>
-      <div className="mt-12 px-12 ">
-        <h1 className="mb-4 text-3xl font-bold">Filters</h1>
-        <div className="flex w-full items-center gap-16 ">
-          {/* <div className="flex flex-col gap-2">
-  <Label htmlFor="brand">By Date</Label>
-                  <TextInput
-                   
-                    type="string"
-                    onFocus={()=>setShowDateFilter(true)}
-                    placeholder="01-Jan-2024"
-                    className="mt-1 w-96"/>
-                   {showDateFilter&& <Calendar className="absolute z-10 top-48 shadow-3xl border-black border"/>}
-                  
-  </div> */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="brand">By Date Range</Label>
-            <TextInput
-              id="brand"
-              type="string"
-              onFocus={() => setShowDateRangeFilter(true)}
-              placeholder="1-Jan-2024  31-Jan-2024"
-              value={`${dateFormat(
-                selectionRange.startDate,
-                "dd/mmm/yyyy"
-              )}- ${dateFormat(selectionRange.endDate, "dd/mmm/yyyy")}`}
-              className="mt-1 w-96"
-            />
-            {showDateRangeFilter && (
-              <DateRangePicker
-                ranges={[selectionRange]}
-                onChange={(e: any) => {
-                  setSelectionRange({
-                    ...selectionRange,
-                    startDate: e.selection.startDate,
-                    endDate: e.selection.endDate,
-                  });
-                  setShowDateRangeFilter(false);
-                }}
-                className="shadow-3xl absolute top-48 border border-black"
-              />
-            )}
+      <div className="w-full space-y-6 p-4 sm:p-6">
+        {/* Page header */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">
+              Manager Dashboard
+            </h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              Overview of sales and costing
+            </p>
           </div>
+          <DateRangeFilter
+            value={selectionRange}
+            onChange={setSelectionRange}
+          />
         </div>
-      </div>
-      <div className="2xl:gap-7.5 mx-[20px] mt-[50px] grid grid-cols-2 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3">
-        <div className="block max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Total sale(USD)
-          </h5>
-          <p className="text-center text-[40px] font-normal text-gray-700 dark:text-gray-400">
-            $ {totalUSD}
-          </p>
-        </div>
-        <div className="block max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Total sale(INR)
-          </h5>
-          <p className="text-center text-[40px] font-normal text-gray-700 dark:text-gray-400">
-            ₹ {totalINR}
-          </p>
-        </div>
-        <div className="block max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Total Costing
-          </h5>
-          <p className="text-center text-[40px] font-normal text-gray-700 dark:text-gray-400">
-            ₹ {totalCosting}
-          </p>
+
+        {/* Stats grid */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <StatCard
+            title="Total Sale (USD)"
+            value={totals.usd}
+            prefix="$"
+            icon={<HiCurrencyDollar className="h-5 w-5" />}
+            color="blue"
+            loading={loading}
+          />
+          <StatCard
+            title="Total Sale (INR)"
+            value={totals.inr}
+            prefix="₹"
+            icon={<HiCurrencyRupee className="h-5 w-5" />}
+            color="green"
+            loading={loading}
+          />
+          <StatCard
+            title="Total Costing"
+            value={totals.costing}
+            prefix="₹"
+            icon={<HiReceiptTax className="h-5 w-5" />}
+            color="orange"
+            loading={loading}
+          />
         </div>
       </div>
     </NavbarSidebarLayout>
   );
 };
+
+const colorStyles = {
+  blue: {
+    icon: "bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400",
+    bar: "bg-blue-500",
+  },
+  green: {
+    icon: "bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-400",
+    bar: "bg-green-500",
+  },
+  orange: {
+    icon: "bg-orange-100 text-orange-600 dark:bg-orange-900/40 dark:text-orange-400",
+    bar: "bg-orange-500",
+  },
+};
+
+const StatCard: FC<{
+  title: string;
+  value: number;
+  prefix: string;
+  icon: React.ReactNode;
+  color: keyof typeof colorStyles;
+  loading: boolean;
+}> = ({ title, value, prefix, icon, color, loading }) => {
+  const s = colorStyles[color];
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+      <div className={`absolute left-0 top-0 h-1 w-full ${s.bar}`} />
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+            {title}
+          </p>
+          {loading ? (
+            <div className="mt-2 h-8 w-32 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
+          ) : (
+            <p className="mt-1.5 text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">
+              {prefix}&nbsp;{value.toLocaleString()}
+            </p>
+          )}
+        </div>
+        <span
+          className={`flex h-10 w-10 items-center justify-center rounded-xl ${s.icon}`}
+        >
+          {icon}
+        </span>
+      </div>
+    </div>
+  );
+};
+
 export default ManagerDashboardPage;
