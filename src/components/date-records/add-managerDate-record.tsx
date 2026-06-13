@@ -49,7 +49,11 @@ const AddManagerDateModal = function ({
   const [isShowCalendar, setShowCalender] = useState(false);
   return (
     <>
-      <Button color="primary" onClick={() => setOpen(!isOpen)}>
+      <Button
+        color="primary"
+        onClick={() => setOpen(!isOpen)}
+        className="w-full whitespace-nowrap sm:w-auto"
+      >
         <FaPlus className="mr-3 text-sm" />
         Add Date
       </Button>

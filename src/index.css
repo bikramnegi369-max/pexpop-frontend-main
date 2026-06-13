@@ -307,6 +307,45 @@
   display: none !important;
 }
 
+/* react-calendar dark mode overrides */
+.dark .react-calendar {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #f9fafb !important;
+}
+.dark .react-calendar__navigation button {
+  color: #f9fafb !important;
+  background: none !important;
+}
+.dark .react-calendar__navigation button:hover,
+.dark .react-calendar__navigation button:focus {
+  background-color: #374151 !important;
+}
+.dark .react-calendar__month-view__weekdays {
+  color: #9ca3af !important;
+}
+.dark .react-calendar__tile {
+  color: #e5e7eb !important;
+  background: none !important;
+}
+.dark .react-calendar__tile:hover {
+  background-color: #374151 !important;
+}
+.dark .react-calendar__tile--now {
+  background-color: #1e3a5f !important;
+}
+.dark .react-calendar__tile--active,
+.dark .react-calendar__tile--active:hover {
+  background-color: #2563eb !important;
+  color: #fff !important;
+}
+.dark .react-calendar__tile--hasActive {
+  background-color: #1d4ed8 !important;
+}
+.dark .react-calendar__month-view__days__day--neighboringMonth {
+  color: #6b7280 !important;
+}
+
 /* bottom sheet slide-up animation */
 @keyframes slideUp {
   from {

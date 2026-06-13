@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Breadcrumb, Table } from "flowbite-react";
+import { Breadcrumb, Table, Badge } from "flowbite-react";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { HiHome } from "react-icons/hi";
@@ -29,12 +29,12 @@ const EntriesPage: FC = function () {
       setEntries(res.data.dateRecord.entries);
       const total_sale_inr_for_date = res.data?.dateRecord?.entries?.reduce(
         (a: number, b: any) => a + b.total_sale_inr,
-        0
+        0,
       );
       // const loss=res.data.data.reduce((a: any, b: any) =>b.profit<0?(a + b.profit):a, 0);
       const total_revenue = res.data?.dateRecord?.entries?.reduce(
         (a: number, b: any) => a + b.revenue,
-        0
+        0,
       );
       setCosting(res.data.dateRecord?.costing_inr);
       setRevnue(total_sale_inr_for_date - res.data.dateRecord?.costing_inr);
@@ -62,29 +62,16 @@ const EntriesPage: FC = function () {
                 Entries
               </Breadcrumb.Item>
             </Breadcrumb>
-            <h1 className="flex justify-between text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-              Entries - {dateFormat(date, "dd mmm yyyy")}
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  className="me-2 mb-2 rounded-lg bg-orange-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-orange-800 focus:outline-none focus:ring-4 focus:ring-orange-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-green-800"
-                >
-                  Costing :{costing.toLocaleString("en-US")}
-                </button>
-                <button
-                  type="button"
-                  className="me-2 mb-2 rounded-lg bg-gray-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-green-800"
-                >
-                  Total Revenue : {revenue.toLocaleString("en-US")}
-                </button>
-                <button
-                  type="button"
-                  className="me-2 mb-2 rounded-lg bg-green-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                >
-                  Net Profit : {profit.toLocaleString("en-US")}
-                </button>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Entries — {dateFormat(date, "dd mmm yyyy")}
+              </h1>
+              <div className="flex flex-wrap gap-2">
+                <StatBadge label="Costing" value={costing} color="warning" />
+                <StatBadge label="Revenue" value={revenue} color="gray" />
+                <StatBadge label="Net Profit" value={profit} color="success" />
               </div>
-            </h1>
+            </div>
           </div>
           <div className="block items-center sm:flex">
             <SearchEntries setEntries={setEntries} />
@@ -107,6 +94,21 @@ const EntriesPage: FC = function () {
     </NavbarSidebarLayout>
   );
 };
+
+const StatBadge: FC<{ label: string; value: number; color: string }> = ({
+  label,
+  value,
+  color,
+}) => (
+  <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 dark:border-gray-700 dark:bg-gray-800">
+    <span className="text-xs font-medium text-gray-500 uppercase">
+      {label}:
+    </span>
+    <span className={`text-sm font-bold text-gray-900 dark:text-white`}>
+      ₹{value.toLocaleString()}
+    </span>
+  </div>
+);
 
 interface ProductTableProps {
   entries: any[];
@@ -207,13 +209,9 @@ const ProductsTable: FC<ProductTableProps> = function ({
                 </Table.Cell>
                 <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
                   {entry.payment_status == "paid" ? (
-                    <span className="rounded-md bg-green-500 px-3 py-1.5 text-sm text-white">
-                      Paid
-                    </span>
+                    <Badge color="success">Paid</Badge>
                   ) : (
-                    <span className="rounded-md bg-red-500 px-3 py-1.5 text-sm text-white">
-                      Pending
-                    </span>
+                    <Badge color="failure">Pending</Badge>
                   )}
                 </Table.Cell>
                 <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
