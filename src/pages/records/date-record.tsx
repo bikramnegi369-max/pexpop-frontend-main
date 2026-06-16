@@ -1,20 +1,14 @@
-import { Breadcrumb } from "flowbite-react";
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
 import dateFormat from "dateformat";
 import { api } from "../../services/api";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router";
 import EditDateModal from "../../components/date-records/edit-date-record";
 import DeleteDateModal from "../../components/date-records/delete-date-record";
 import AddDateModal from "../../components/date-records/add-date-record";
 import DateRangeFilter from "../../components/DateRangeFilter";
-import {
-  HiArrowRight,
-  HiCalendar,
-  HiHome,
-  HiOutlineArchive,
-} from "react-icons/hi";
+import { HiArrowRight, HiCalendar } from "react-icons/hi";
 
 function getMonthRange(year: number, month: number) {
   const m = month - 1;
@@ -64,27 +58,22 @@ const DateRecordPage: FC = function () {
 
   return (
     <NavbarSidebarLayout isFooter={false}>
-      <div className="mx-auto w-full max-w-[1440px] space-y-6 p-4 sm:p-6 lg:p-10">
-        {/* ── Header Section ────────────────────────────────────────────── */}
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+      <div className="w-full space-y-5 p-4 sm:p-6">
+        {/* Header */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <nav className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-              <Link
-                to="/"
-                className="flex items-center transition-colors hover:text-blue-600"
-              >
-                <HiHome className="mr-1 h-3.5 w-3.5" /> Home
-              </Link>
-              <span>/</span>
-              <span className="text-gray-600 dark:text-gray-400">
-                Date Records
-              </span>
-            </nav>
-            <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">
               Date Records
             </h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {loading
+                ? "Loading…"
+                : `${dateRecords.length} record${
+                    dateRecords.length !== 1 ? "s" : ""
+                  } found`}
+            </p>
           </div>
-          <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
             <DateRangeFilter
               value={selectionRange}
               onChange={setSelectionRange}
@@ -95,59 +84,56 @@ const DateRecordPage: FC = function () {
 
         {/* List */}
         {loading ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {[...Array(4)].map((_, i) => (
               <div
                 key={i}
-                className="h-28 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800/50"
+                className="h-24 animate-pulse rounded-2xl bg-gray-200 dark:bg-gray-700"
               />
             ))}
           </div>
         ) : dateRecords.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-100 bg-white py-24 dark:border-gray-800 dark:bg-gray-900/50">
-            <div className="rounded-2xl bg-gray-50 p-4 dark:bg-gray-800">
-              <HiOutlineArchive className="h-10 w-10 text-gray-300 dark:text-gray-600" />
-            </div>
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white py-20 dark:border-gray-600 dark:bg-gray-800">
+            <HiCalendar className="mb-3 h-12 w-12 text-gray-300 dark:text-gray-600" />
             <p className="text-sm font-medium text-gray-400 dark:text-gray-500">
               No records found for this range
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {dateRecords.map((record: any) => (
               <div
                 key={record.id}
-                className="group relative overflow-hidden rounded-3xl border border-gray-200/60 bg-white shadow-sm transition-all hover:shadow-lg dark:border-white/5 dark:bg-gray-800/50 dark:backdrop-blur-sm"
+                className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
               >
                 {/* Status bar */}
                 <div
-                  className={`absolute inset-y-0 left-0 w-1 transition-colors ${
+                  className={`absolute left-0 top-0 h-full w-1 ${
                     record.total_pending_entries > 0
-                      ? "bg-red-500"
-                      : "bg-green-500"
+                      ? "bg-red-400"
+                      : "bg-green-400"
                   }`}
                 />
 
-                <div className="flex flex-col gap-6 p-5 pl-8 md:p-6 md:pl-10 lg:flex-row lg:items-center lg:gap-6 xl:gap-12">
+                <div className="flex flex-col gap-4 p-4 pl-5 sm:flex-row sm:items-center sm:p-5 sm:pl-6">
                   {/* Date + entries */}
-                  <div className="flex flex-col lg:w-44 xl:w-56">
-                    <p className="text-base font-black text-gray-900 dark:text-white lg:text-lg">
+                  <div className="min-w-[130px]">
+                    <p className="text-base font-bold text-gray-900 dark:text-white">
                       {dateFormat(record.date, "dd mmm yyyy")}
                     </p>
-                    <div className="mt-2 flex items-center gap-2">
+                    <div className="mt-1 flex items-center gap-1.5">
                       <span
-                        className={`h-1.5 w-1.5 rounded-full ${
+                        className={`h-2 w-2 rounded-full ${
                           record.total_pending_entries > 0
-                            ? "animate-pulse bg-red-500"
-                            : "bg-green-500"
+                            ? "bg-red-400"
+                            : "bg-green-400"
                         }`}
                       />
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-                        {record.total_entries}{" "}
-                        {record.total_entries === 1 ? "entry" : "entries"}
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {record.total_entries} entries
                         {record.total_pending_entries > 0 && (
-                          <span className="ml-2 inline-flex items-center rounded-md bg-red-50 px-2 py-0.5 text-[9px] font-black text-red-600 ring-1 ring-inset ring-red-600/10 dark:bg-red-500/10 dark:text-red-400">
-                            {record.total_pending_entries} PENDING
+                          <span className="ml-1 text-red-500">
+                            · {record.total_pending_entries} pending
                           </span>
                         )}
                       </span>
@@ -155,32 +141,34 @@ const DateRecordPage: FC = function () {
                   </div>
 
                   {/* Stats */}
-                  <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 xl:gap-6">
+                  <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4">
                     <StatCell
                       label="Sale (USD)"
-                      value={`$${Number(
+                      value={`$ ${Number(
                         record.total_sale_usd,
                       ).toLocaleString()}`}
                     />
                     <StatCell
                       label="Sale (INR)"
-                      value={`₹${Number(
+                      value={`₹ ${Number(
                         record.total_sale_inr,
                       ).toLocaleString()}`}
                     />
                     <StatCell
                       label="Costing"
-                      value={`₹${Number(record.costing_inr).toLocaleString()}`}
+                      value={`₹ ${Number(record.costing_inr).toLocaleString()}`}
                     />
                     <StatCell
                       label="Profit"
-                      value={`₹${Number(record.total_profit).toLocaleString()}`}
-                      color={record.total_profit >= 0 ? "green" : "red"}
+                      value={`₹ ${Number(
+                        record.total_profit,
+                      ).toLocaleString()}`}
+                      highlight={record.total_profit > 0}
                     />
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center justify-end gap-3 border-t border-gray-50 pt-4 lg:ml-auto lg:border-0 lg:pt-0">
+                  <div className="flex items-center gap-2 sm:flex-col sm:gap-2 lg:flex-row">
                     <button
                       onClick={() =>
                         navigate(
@@ -190,9 +178,9 @@ const DateRecordPage: FC = function () {
                           )}`,
                         )
                       }
-                      className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-700 active:scale-95 sm:flex-none"
+                      className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-700 active:scale-95 sm:flex-none"
                     >
-                      <span>Entries</span>{" "}
+                      Entries
                       <HiArrowRight className="h-3.5 w-3.5" />
                     </button>
                     <EditDateModal
@@ -215,39 +203,25 @@ const DateRecordPage: FC = function () {
   );
 };
 
-const StatCell: FC<{
-  label: string;
-  value: string;
-  color?: "green" | "red" | "gray";
-}> = ({ label, value, color = "gray" }) => {
-  const textColor =
-    color === "green"
-      ? "text-green-600 dark:text-green-400"
-      : color === "red"
-      ? "text-red-600 dark:text-red-400"
-      : "text-gray-900 dark:text-gray-100";
-
-  const bgColor =
-    color === "green"
-      ? "bg-green-50/40 dark:bg-green-500/10"
-      : color === "red"
-      ? "bg-red-50/40 dark:bg-red-500/10"
-      : "bg-gray-50/50 dark:bg-gray-800/40";
-
-  return (
-    <div
-      className={`flex flex-col justify-center rounded-2xl p-3.5 ring-1 ring-inset ring-gray-100 transition-all hover:bg-white dark:ring-white/5 md:p-4 ${bgColor}`}
+const StatCell: FC<{ label: string; value: string; highlight?: boolean }> = ({
+  label,
+  value,
+  highlight,
+}) => (
+  <div className="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-700/50">
+    <p className="text-xs font-medium text-gray-400 dark:text-gray-500">
+      {label}
+    </p>
+    <p
+      className={`mt-0.5 text-sm font-semibold ${
+        highlight
+          ? "text-green-600 dark:text-green-400"
+          : "text-gray-800 dark:text-gray-200"
+      }`}
     >
-      <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-        {label}
-      </p>
-      <p
-        className={`mt-1 text-sm font-black tabular-nums tracking-tight lg:text-base ${textColor}`}
-      >
-        {value}
-      </p>
-    </div>
-  );
-};
+      {value}
+    </p>
+  </div>
+);
 
 export default DateRecordPage;
