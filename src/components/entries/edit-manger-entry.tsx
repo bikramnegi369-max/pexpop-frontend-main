@@ -29,7 +29,7 @@ const EditManagerEntryModal = function ({
     const res = await api.put(
       `/manager/update-entry/${entryId}`,
       JSON.stringify(data),
-      { headers: { "Content-Type": "application/json" } },
+      { headers: { "Content-Type": "application/json" } }
     );
     if (res.data.status == "success") {
       toast.success(res.data.message, {

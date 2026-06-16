@@ -47,7 +47,7 @@ const AllManagerEntriesPage: FC = function () {
       saleInr: acc.saleInr + (Number(curr.total_sale_inr) || 0),
       costing: acc.costing + (Number(curr.costing_inr) || 0),
     }),
-    { saleUsd: 0, saleInr: 0, costing: 0 },
+    { saleUsd: 0, saleInr: 0, costing: 0 }
   );
 
   const getDateRecordsByDateRange = useCallback(async () => {
@@ -55,7 +55,7 @@ const AllManagerEntriesPage: FC = function () {
     const from = dateFormat(selectionRange.startDate, "yyyy-mm-dd");
     const to = dateFormat(selectionRange.endDate, "yyyy-mm-dd");
     const res = await api.get(
-      `/manager/date-by-date-range/?from=${from}&to=${to}`,
+      `/manager/date-by-date-range/?from=${from}&to=${to}`
     );
     setDateRecords(res.data.status === "success" ? res.data.data : []);
     setLoading(false);
@@ -117,7 +117,7 @@ const AllManagerEntriesPage: FC = function () {
                 ₹{totals.saleInr.toLocaleString()}
               </p>
             </div>
-            <div className="rounded-3xl border border-gray-100 bg-gray-50/50 p-5 dark:border-white/5 dark:bg-gray-800/40 col-span-2 lg:col-span-1">
+            <div className="col-span-2 rounded-3xl border border-gray-100 bg-gray-50/50 p-5 dark:border-white/5 dark:bg-gray-800/40 lg:col-span-1">
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
                 Total Costing
               </p>
@@ -183,14 +183,14 @@ const AllManagerEntriesPage: FC = function () {
                     <StatCell
                       label="Sale (USD)"
                       value={`$${Number(
-                        record.total_sale_usd,
+                        record.total_sale_usd
                       ).toLocaleString()}`}
                       icon={<HiCurrencyDollar className="h-3.5 w-3.5" />}
                     />
                     <StatCell
                       label="Sale (INR)"
                       value={`₹${Number(
-                        record.total_sale_inr,
+                        record.total_sale_inr
                       ).toLocaleString()}`}
                       icon={<HiCash className="h-3.5 w-3.5" />}
                     />
@@ -206,8 +206,8 @@ const AllManagerEntriesPage: FC = function () {
                         navigate(
                           `/managerEntries-by-date/${dateFormat(
                             record.date,
-                            "dd-mmm-yyyy",
-                          )}`,
+                            "dd-mmm-yyyy"
+                          )}`
                         )
                       }
                       className="flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-700 active:scale-95 sm:flex-none xl:px-8"
@@ -241,7 +241,7 @@ const StatCell: FC<{
 }> = ({ label, value, icon }) => {
   return (
     <div className="rounded-xl bg-gray-50/50 p-3 ring-1 ring-inset ring-gray-100 transition-all dark:bg-gray-800/40 dark:ring-white/5 sm:p-4">
-      <div className="flex items-center gap-1.5 mb-1">
+      <div className="mb-1 flex items-center gap-1.5">
         {icon && (
           <span className="text-gray-400 dark:text-gray-500">{icon}</span>
         )}

@@ -132,7 +132,7 @@ const ProductsTable: FC<ProductTableProps> = function ({
   const totalPage = Math.ceil(entries.length / itemsPerPage);
   const currentItems = entries.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   if (loading)

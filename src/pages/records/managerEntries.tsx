@@ -63,7 +63,7 @@ const ManagerEntriesPage: FC = function () {
     setLoading(true);
     try {
       const res = await api.get(
-        `/manager/entries-by-date?date=${formatedDate}`,
+        `/manager/entries-by-date?date=${formatedDate}`
       );
       if (res.data.status === "success") {
         const entryList = res.data.dateRecord?.entries || [];
@@ -71,11 +71,11 @@ const ManagerEntriesPage: FC = function () {
         setStats({
           totalUsd: entryList.reduce(
             (a: number, b: any) => a + (Number(b.total_sale_usd) || 0),
-            0,
+            0
           ),
           totalInr: entryList.reduce(
             (a: number, b: any) => a + (Number(b.total_sale_inr) || 0),
-            0,
+            0
           ),
           costing: Number(res.data.dateRecord?.costing_inr) || 0,
         });
@@ -91,7 +91,7 @@ const ManagerEntriesPage: FC = function () {
 
   return (
     <NavbarSidebarLayout isFooter={false}>
-      <div className="mx-auto w-full max-w-screen-xl px-3 py-4 sm:px-5 sm:py-6 lg:px-8 lg:py-8">
+      <div className="mx-auto w-full max-w-screen-xl px-3 py-4 sm:px-5 sm:py-6 lg:p-8">
         {/* ── Breadcrumb ─────────────────────────────────────────────────── */}
         <nav className="mb-4 flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 sm:mb-5">
           <Link
@@ -223,7 +223,7 @@ const ManagerEntriesList: FC<{
   const totalPage = Math.ceil(entries.length / itemsPerPage);
   const currentItems = entries.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   if (loading)

@@ -19,11 +19,17 @@ const DeleteDateModal = function ({
     try {
       const res = await api.delete(`/auth/delete-date/${dateRecordId}`);
       if (res.data.status === "success") {
-        toast.success(res.data.message, { position: "top-center", autoClose: 2000 });
+        toast.success(res.data.message, {
+          position: "top-center",
+          autoClose: 2000,
+        });
         setOpen(false);
         getDateRecords();
       } else {
-        toast.error(res.data.message, { position: "top-center", autoClose: 2000 });
+        toast.error(res.data.message, {
+          position: "top-center",
+          autoClose: 2000,
+        });
       }
     } finally {
       setLoading(false);
@@ -47,8 +53,12 @@ const DeleteDateModal = function ({
               <HiOutlineExclamationCircle className="h-8 w-8 text-red-500" />
             </div>
             <div>
-              <p className="text-base font-semibold text-gray-900 dark:text-white">Delete this record?</p>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">This action cannot be undone.</p>
+              <p className="text-base font-semibold text-gray-900 dark:text-white">
+                Delete this record?
+              </p>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                This action cannot be undone.
+              </p>
             </div>
             <div className="flex w-full gap-3 pt-1">
               <button

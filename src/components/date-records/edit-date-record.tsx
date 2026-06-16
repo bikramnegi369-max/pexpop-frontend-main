@@ -20,19 +20,31 @@ const EditDateModal = function ({
 }) {
   const [isOpen, setOpen] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
-  const { register, handleSubmit, setValue, watch } = useForm<DateRecord>({ defaultValues: dateRecord });
+  const { register, handleSubmit, setValue, watch } = useForm<DateRecord>({
+    defaultValues: dateRecord,
+  });
   const dateValue = watch("date");
 
   const onSubmit = async (data: DateRecord) => {
-    const res = await api.put(`/auth/update-date/${dateRecordId}`, JSON.stringify(data), {
-      headers: { "Content-Type": "application/json" },
-    });
+    const res = await api.put(
+      `/auth/update-date/${dateRecordId}`,
+      JSON.stringify(data),
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
     if (res.data.status === "success") {
-      toast.success(res.data.message, { position: "top-center", autoClose: 2000 });
+      toast.success(res.data.message, {
+        position: "top-center",
+        autoClose: 2000,
+      });
       setOpen(false);
       getDateRecords();
     } else {
-      toast.error(res.data.message, { position: "top-center", autoClose: 2000 });
+      toast.error(res.data.message, {
+        position: "top-center",
+        autoClose: 2000,
+      });
     }
   };
 
@@ -48,14 +60,17 @@ const EditDateModal = function ({
 
       <Modal onClose={() => setOpen(false)} show={isOpen} size="md">
         <Modal.Header className="border-b border-gray-100 px-6 py-4 dark:border-gray-700">
-          <span className="text-base font-semibold text-gray-900 dark:text-white">Edit Date Record</span>
+          <span className="text-base font-semibold text-gray-900 dark:text-white">
+            Edit Date Record
+          </span>
         </Modal.Header>
         <Modal.Body className="px-6 py-5">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
             {/* Date field */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Date
+              </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                   <HiCalendar className="h-4 w-4 text-gray-400" />
@@ -84,11 +99,18 @@ const EditDateModal = function ({
 
             {/* Costing field */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Costing (INR)</label>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Costing (INR)
+              </label>
               <div className="relative">
-                <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-gray-400">₹</span>
+                <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-gray-400">
+                  ₹
+                </span>
                 <input
-                  {...register("costing_inr", { required: true, valueAsNumber: true })}
+                  {...register("costing_inr", {
+                    required: true,
+                    valueAsNumber: true,
+                  })}
                   type="number"
                   placeholder="0"
                   className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-7 pr-4 text-sm text-gray-700 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"

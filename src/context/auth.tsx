@@ -19,7 +19,7 @@ const AuthProvider = ({ children }: Props) => {
   const navigate = useNavigate();
   const [cookies, setCookies, removeCookie] = useCookies();
   const [isAuthenticated, setIsAuthenticated] = useState(
-    cookies["token"] ? true : false
+    cookies.token ? true : false
   );
 
   const login = (token: string) => {

@@ -47,7 +47,7 @@ function getMonthRange(year: number, month: number) {
   const m = month - 1;
   const fmt = (d: Date) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-      d.getDate(),
+      d.getDate()
     ).padStart(2, "0")}`;
   return {
     firstDay: fmt(new Date(year, m, 1)),
@@ -59,7 +59,7 @@ const DateRecordPage: FC = function () {
   const today = new Date();
   const { firstDay, lastDay } = getMonthRange(
     today.getFullYear(),
-    today.getMonth() + 1,
+    today.getMonth() + 1
   );
   const navigate = useNavigate();
 
@@ -79,7 +79,7 @@ const DateRecordPage: FC = function () {
       costing: acc.costing + (Number(curr.costing_inr) || 0),
       profit: acc.profit + (Number(curr.total_profit) || 0),
     }),
-    { saleUsd: 0, saleInr: 0, costing: 0, profit: 0 },
+    { saleUsd: 0, saleInr: 0, costing: 0, profit: 0 }
   );
 
   const getDateRecords = useCallback(async () => {
@@ -88,7 +88,7 @@ const DateRecordPage: FC = function () {
       const from = dateFormat(selectionRange.startDate, "yyyy-mm-dd");
       const to = dateFormat(selectionRange.endDate, "yyyy-mm-dd");
       const res = await api.get(
-        `/auth/date-by-date-range/?from=${from}&to=${to}`,
+        `/auth/date-by-date-range/?from=${from}&to=${to}`
       );
       setDateRecords(res.data.status === "success" ? res.data.data : []);
     } finally {
@@ -265,7 +265,7 @@ const DateRecordCard: FC<{
             <button
               onClick={() =>
                 navigate(
-                  `/entries-by-date/${dateFormat(record.date, "dd-mmm-yyyy")}`,
+                  `/entries-by-date/${dateFormat(record.date, "dd-mmm-yyyy")}`
                 )
               }
               className="flex h-9 items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-3 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm transition-all hover:bg-blue-700 active:scale-95"
