@@ -302,7 +302,9 @@ const DateRecordCard: FC<{
           <MiniStat
             label="Pending"
             value={String(record.total_pending_entries)}
-            valueClass={hasPending ? "text-red-600 dark:text-red-400" : ""}
+            valueClass={
+              hasPending ? "text-red-600 dark:text-red-400" : undefined
+            }
           />
         </div>
 
