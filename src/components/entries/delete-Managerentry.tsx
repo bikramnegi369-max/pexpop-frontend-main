@@ -49,9 +49,16 @@ const DeleteManagerEntryModal = function ({
 
   return (
     <>
-      <Button color="failure" onClick={() => setOpen(!isOpen)}>
-        <HiTrash className="mr-2 text-lg" />
-        Delete item
+      <Button
+        size="sm"
+        color="failure"
+        onClick={() => setOpen(!isOpen)}
+        className="flex h-9 w-9 items-center justify-center rounded-xl p-0 shadow-sm transition-all sm:w-auto sm:px-3"
+      >
+        <HiTrash className="h-4 w-4 sm:mr-2" />
+        <span className="hidden text-[10px] font-bold uppercase tracking-widest sm:inline">
+          Delete
+        </span>
       </Button>
       <Modal onClose={() => setOpen(false)} show={isOpen} size="md">
         <Modal.Header className="px-3 pt-3 pb-0">

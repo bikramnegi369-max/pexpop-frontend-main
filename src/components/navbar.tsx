@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { DarkThemeToggle, Navbar } from "flowbite-react";
 import { HiMenuAlt1 } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 interface NavbarProps {
   onToggleSidebar?: () => void;
@@ -21,7 +22,7 @@ const ExampleNavbar: FC<NavbarProps> = function ({ onToggleSidebar }) {
             >
               <HiMenuAlt1 className="h-6 w-6" />
             </button>
-            <Navbar.Brand href="/">
+            <Navbar.Brand as={Link} to="/">
               <img alt="" src="/images/logo.png" className="mr-3 h-6 sm:h-8" />
               <span className="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">
                 PEXPOP

@@ -1,7 +1,7 @@
 import "./index.css";
 import theme from "./flowbite-theme";
 import { Flowbite } from "flowbite-react";
-import { Routes, Route, Navigate } from "react-router";
+import { Routes, Route, Navigate } from "react-router-dom";
 import DashboardPage from "./pages";
 import SignInPage from "./pages/authentication/sign-in";
 import SignUpPage from "./pages/authentication/sign-up";

@@ -3,7 +3,7 @@ import type EntryInputs from "../../types/Entry";
 import { useForm } from "react-hook-form";
 import { api } from "../../services/api";
 import { Button, Label, Modal, Select, TextInput } from "flowbite-react";
-import { FaEdit } from "react-icons/fa";
+import { HiPencilAlt } from "react-icons/hi";
 import { toast } from "react-toastify";
 const EditManagerEntryModal = function ({
   entry,
@@ -29,7 +29,7 @@ const EditManagerEntryModal = function ({
     const res = await api.put(
       `/manager/update-entry/${entryId}`,
       JSON.stringify(data),
-      { headers: { "Content-Type": "application/json" } }
+      { headers: { "Content-Type": "application/json" } },
     );
     if (res.data.status == "success") {
       toast.success(res.data.message, {
@@ -59,9 +59,16 @@ const EditManagerEntryModal = function ({
   };
   return (
     <>
-      <Button color="primary" onClick={() => setOpen(!isOpen)}>
-        <FaEdit className="mr-3 text-sm" />
-        Edit Entry
+      <Button
+        size="sm"
+        color="light"
+        onClick={() => setOpen(!isOpen)}
+        className="flex h-9 w-9 items-center justify-center rounded-xl border-gray-200 bg-white p-0 shadow-sm transition-all hover:bg-gray-50 hover:text-blue-600 dark:border-white/10 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-blue-400 sm:w-auto sm:px-3"
+      >
+        <HiPencilAlt className="h-4 w-4 sm:mr-2" />
+        <span className="hidden text-[10px] font-bold uppercase tracking-widest sm:inline">
+          Edit
+        </span>
       </Button>
       <Modal onClose={() => setOpen(false)} show={isOpen}>
         <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">

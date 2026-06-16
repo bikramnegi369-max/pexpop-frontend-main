@@ -1,248 +1,334 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Breadcrumb, Table } from "flowbite-react";
+import { Badge } from "flowbite-react";
 import type { FC } from "react";
-import { useEffect, useState } from "react";
-import { HiHome } from "react-icons/hi";
+import { useEffect, useState, useCallback } from "react";
+import {
+  HiHome,
+  HiCash,
+  HiTrendingUp,
+  HiCurrencyDollar,
+  HiUser,
+  HiOutlineArchive,
+  HiChevronLeft,
+  HiChevronRight,
+  HiCalendar,
+} from "react-icons/hi";
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
 import "react-calendar/dist/Calendar.css";
 import dateFormat from "dateformat";
 import { api } from "../../services/api";
-import { useParams } from "react-router";
 import EditManagerEntryModal from "../../components/entries/edit-manger-entry";
 import DeleteManagerEntryModal from "../../components/entries/delete-Managerentry";
 import AddManagerEntryModal from "../../components/entries/add-Managerentry";
 import SearchManagerEntries from "../../components/entries/search-Managerentries";
+import { Link, useParams } from "react-router-dom";
+
+// ─── Colour tokens ────────────────────────────────────────────────────────────
+const COLOR = {
+  blue: {
+    pip: "bg-blue-500",
+    text: "text-blue-600 dark:text-blue-400",
+    bg: "bg-blue-50 dark:bg-blue-500/10",
+  },
+  green: {
+    pip: "bg-green-500",
+    text: "text-green-600 dark:text-green-400",
+    bg: "bg-green-50 dark:bg-green-500/10",
+  },
+  yellow: {
+    pip: "bg-yellow-500",
+    text: "text-yellow-600 dark:text-yellow-400",
+    bg: "bg-yellow-50 dark:bg-yellow-500/10",
+  },
+  red: {
+    pip: "bg-red-500",
+    text: "text-red-600 dark:text-red-400",
+    bg: "bg-red-50 dark:bg-red-500/10",
+  },
+};
 
 const ManagerEntriesPage: FC = function () {
   const [entries, setEntries] = useState<any[]>([]);
-  // const [profit, setProfit] = useState<number>(0);
-  // const [revenue, setRevnue] = useState<number>(0);
-  // const [costing, setCosting] = useState<number>(0);
-  const { date } = useParams();
-  const formatedDate = dateFormat(date, "yyyy/mm/dd");
-  console.log(formatedDate + "date");
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalUsd: 0,
+    totalInr: 0,
+    costing: 0,
+  });
 
-  const getEntries = async () => {
-    console.log("entreis");
-    const res = await api.get(`/manager/entries-by-date?date=${formatedDate}`);
-    if (res.data.status === "success") {
-      setEntries(res.data.dateRecord.entries);
-      // const total_sale_inr_for_date = res.data?.dateRecord?.entries?.reduce((a: number, b: any) => (a + b.total_sale_inr), 0);
-      // const loss=res.data.data.reduce((a: any, b: any) =>b.profit<0?(a + b.profit):a, 0);
-      // const total_revenue = res.data?.dateRecord?.entries?.reduce((a: number, b: any) => (a + b.revenue), 0);
-      // setCosting(res.data.dateRecord?.costing_inr)
-      //   setRevnue(total_sale_inr_for_date - res.data.dateRecord?.costing_inr);
-      //   setProfit(total_revenue - res.data.dateRecord?.costing_inr);
-    } else {
+  const { date } = useParams();
+  const formatedDate = dateFormat(date || "", "yyyy/mm/dd");
+
+  const getEntries = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await api.get(
+        `/manager/entries-by-date?date=${formatedDate}`,
+      );
+      if (res.data.status === "success") {
+        const entryList = res.data.dateRecord?.entries || [];
+        setEntries(entryList);
+        setStats({
+          totalUsd: entryList.reduce(
+            (a: number, b: any) => a + (Number(b.total_sale_usd) || 0),
+            0,
+          ),
+          totalInr: entryList.reduce(
+            (a: number, b: any) => a + (Number(b.total_sale_inr) || 0),
+            0,
+          ),
+          costing: Number(res.data.dateRecord?.costing_inr) || 0,
+        });
+      }
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [formatedDate]);
+
   useEffect(() => {
     getEntries();
-  }, []);
+  }, [getEntries]);
 
   return (
     <NavbarSidebarLayout isFooter={false}>
-      <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
-        <div className="mb-1 w-full">
-          <div className="mb-4">
-            <Breadcrumb className="mb-4">
-              <Breadcrumb.Item href="#">
-                <div className="flex items-center gap-x-3">
-                  <HiHome className="text-xl" />
-                  <span className="dark:text-white">Home</span>
-                </div>
-              </Breadcrumb.Item>
-              <Breadcrumb.Item href="/e-commerce/products">
-                Entries
-              </Breadcrumb.Item>
-            </Breadcrumb>
-            <h1 className="flex justify-between text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-              Entries - {dateFormat(date, "dd mmm yyyy")}
-              {/* <div className="flex gap-4">
-                <button type="button" className="focus:outline-none text-white bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-green-800">Costing :{costing.toLocaleString("en-US")}</button>
-                <button type="button" className="focus:outline-none text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-green-800">Total Revenue : {revenue.toLocaleString("en-US")}</button>
-                <button type="button" className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Net Profit : {profit.toLocaleString("en-US")}</button>
-              </div> */}
-            </h1>
-          </div>
-          <div className="block items-center sm:flex">
-            <SearchManagerEntries setEntries={setEntries} />
+      <div className="mx-auto w-full max-w-screen-xl px-3 py-4 sm:px-5 sm:py-6 lg:px-8 lg:py-8">
+        {/* ── Breadcrumb ─────────────────────────────────────────────────── */}
+        <nav className="mb-4 flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 sm:mb-5">
+          <Link
+            to="/auth/manager-dashboard"
+            className="flex items-center gap-1 rounded-md px-1.5 py-0.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"
+          >
+            <HiHome className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Dashboard</span>
+          </Link>
+          <span>/</span>
+          <Link
+            to="/all-manager"
+            className="rounded-md px-1.5 py-0.5 transition hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700"
+          >
+            Manager Records
+          </Link>
+          <span>/</span>
+          <span className="font-medium text-gray-600 dark:text-gray-300">
+            Entries
+          </span>
+        </nav>
 
-            <div className="flex w-full items-center gap-4 sm:justify-end">
-              <AddManagerEntryModal getEntries={getEntries} />
+        {/* ── Header ────────────────────────────────────────────────── */}
+        <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <div className="mb-1 flex items-center gap-2">
+              <HiCalendar className="h-5 w-5 shrink-0 text-blue-500" />
+              <h1 className="text-xl font-extrabold text-gray-900 dark:text-white sm:text-2xl">
+                Manager Entries - {dateFormat(date, "dd mmm yyyy")}
+              </h1>
             </div>
+            <p className="pl-7 text-sm text-gray-400 dark:text-gray-500">
+              {loading ? "Loading..." : `${entries.length} entries recorded`}
+            </p>
           </div>
+          <AddManagerEntryModal getEntries={getEntries} />
         </div>
-      </div>
-      <div className="flex flex-col">
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden shadow">
-              <ProductsTable entries={entries} getEntries={getEntries} />
-            </div>
-          </div>
+
+        {/* ── Stats ─────────────────────────────────────────────────── */}
+        <div className="mb-5 grid grid-cols-1 gap-3 sm:mb-6 sm:grid-cols-3">
+          <StatCard
+            label="Total Sale (USD)"
+            value={stats.totalUsd}
+            prefix="$"
+            icon={<HiCurrencyDollar />}
+            color="blue"
+          />
+          <StatCard
+            label="Total Sale (INR)"
+            value={stats.totalInr}
+            prefix="₹"
+            icon={<HiCash />}
+            color="yellow"
+          />
+          <StatCard
+            label="Total Costing"
+            value={stats.costing}
+            prefix="₹"
+            icon={<HiOutlineArchive />}
+            color="red"
+          />
         </div>
+
+        {/* ── Search ─────────────────────────────────────────────────── */}
+        <div className="mb-5 rounded-2xl border border-gray-200/70 bg-white px-4 py-3 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:mb-6">
+          <SearchManagerEntries setEntries={setEntries} />
+        </div>
+
+        {/* ── List ───────────────────────────────────────────────────── */}
+        <ManagerEntriesList
+          entries={entries}
+          getEntries={getEntries}
+          loading={loading}
+        />
       </div>
     </NavbarSidebarLayout>
   );
 };
 
-interface ProductTableProps {
+const StatCard: FC<{
+  label: string;
+  value: number;
+  prefix: string;
+  icon: React.ReactNode;
+  color: keyof typeof COLOR;
+  className?: string;
+}> = ({ label, value, prefix, icon, color, className = "" }) => {
+  const c = COLOR[color];
+  return (
+    <div
+      className={`group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-3.5 shadow-sm transition-all duration-300 hover:shadow-lg dark:border-white/5 dark:bg-gray-800/60 dark:backdrop-blur-md sm:p-5 ${className}`}
+    >
+      <div className="flex items-center gap-4">
+        <div
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-105 sm:h-11 sm:w-11 ${c.bg}`}
+        >
+          <span className={`h-4 w-4 sm:h-5 sm:w-5 ${c.text}`}>{icon}</span>
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="mb-0.5 text-[9px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 sm:text-[10px]">
+            {label}
+          </p>
+          <div className="flex flex-wrap items-baseline gap-x-0.5">
+            <span className={`text-xs font-bold opacity-70 ${c.text}`}>
+              {prefix}
+            </span>
+            <span
+              className={`text-sm font-black tabular-nums tracking-tight sm:text-lg lg:text-xl ${c.text}`}
+            >
+              {value.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        className={`absolute inset-x-0 bottom-0 h-1 scale-x-0 transition-transform duration-500 group-hover:scale-x-100 ${c.pip}`}
+      />
+    </div>
+  );
+};
+
+const ManagerEntriesList: FC<{
   entries: any[];
-  getEntries: any;
-}
-const ProductsTable: FC<ProductTableProps> = function ({
-  entries,
-  getEntries,
-}: ProductTableProps) {
+  getEntries: () => void;
+  loading: boolean;
+}> = ({ entries, getEntries, loading }) => {
   const [currentPage, setCurrentPage] = useState(1);
-
   const itemsPerPage = 5;
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = entries.slice(indexOfFirstItem, indexOfLastItem);
   const totalPage = Math.ceil(entries.length / itemsPerPage);
+  const currentItems = entries.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
 
-  const goToNext = () => {
-    if (currentPage < totalPage) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-  const goToPrev = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+  if (loading)
+    return (
+      <div className="space-y-3">
+        {[...Array(3)].map((_, i) => (
+          <div
+            key={i}
+            className="h-32 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-700/60"
+          />
+        ))}
+      </div>
+    );
+  if (entries.length === 0)
+    return (
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white py-16 dark:border-white/10 dark:bg-gray-800/50">
+        <HiOutlineArchive className="mb-2 h-10 w-10 text-gray-200" />
+        <p className="text-gray-400">No entries found</p>
+      </div>
+    );
 
   return (
     <>
-      <Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-        <Table.Head className="bg-gray-100 dark:bg-gray-700">
-          {/* <Table.HeadCell>
-            <span className="sr-only">Toggle selected</span>
-            <Checkbox />
-          </Table.HeadCell> */}
-
-          <Table.HeadCell>Date</Table.HeadCell>
-          <Table.HeadCell>Name</Table.HeadCell>
-          <Table.HeadCell>Sale 1</Table.HeadCell>
-          <Table.HeadCell>Rate 1</Table.HeadCell>
-          <Table.HeadCell>Sale 2</Table.HeadCell>
-          <Table.HeadCell>Rate 2</Table.HeadCell>
-          <Table.HeadCell>Sale 3</Table.HeadCell>
-          <Table.HeadCell>Rate 3</Table.HeadCell>
-          <Table.HeadCell>Total Sale (USD)</Table.HeadCell>
-          <Table.HeadCell>Total Sale (INR)</Table.HeadCell>
-
-          <Table.HeadCell>Manager Payment Status</Table.HeadCell>
-
-          <Table.HeadCell>Action</Table.HeadCell>
-        </Table.Head>
-        <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-          {currentItems.length > 0 &&
-            currentItems.map((entry: any) => (
-              <Table.Row className="hover:bg-gray-100 dark:hover:bg-gray-700">
-                {/* <Table.Cell>
-                <Checkbox />
-              </Table.Cell> */}
-                <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                  <div className="text-base font-semibold text-gray-900 dark:text-white">
-                    {dateFormat(entry.date, "dd mmm yyyy")}
-                  </div>
-                </Table.Cell>
-                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                  {entry.name}
-                </Table.Cell>
-                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                  {entry.sale1}
-                </Table.Cell>
-                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                  {entry.rate1}
-                </Table.Cell>
-                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                  {entry.sale2}
-                </Table.Cell>
-                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                  {entry.rate2}
-                </Table.Cell>
-                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                  {entry.sale3}
-                </Table.Cell>
-                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                  {entry.rate3}
-                </Table.Cell>
-                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                  {entry.total_sale_usd}
-                </Table.Cell>
-                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                  {entry.total_sale_inr}
-                </Table.Cell>
-
-                <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                  {entry.payment_status == "paid" ? (
-                    <span className="rounded-md bg-green-500 px-3 py-1.5 text-sm text-white">
-                      Paid
-                    </span>
-                  ) : (
-                    <span className="rounded-md bg-red-500 px-3 py-1.5 text-sm text-white">
-                      Pending
-                    </span>
-                  )}
-                </Table.Cell>
-
-                <Table.Cell className="space-x-2 whitespace-nowrap p-4">
-                  <div className="flex items-center gap-x-3">
-                    <EditManagerEntryModal
-                      entry={entry}
-                      entryId={entry._id}
-                      getEntries={getEntries}
-                    />
-                    <DeleteManagerEntryModal
-                      entryId={entry._id}
-                      getEntries={getEntries}
-                    />
-                  </div>
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          {currentItems.length === 0 && (
-            <Table.Row className="hover:bg-gray-100 dark:hover:bg-gray-700">
-              <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                <div className="text-center text-base font-semibold text-gray-900 dark:text-white">
-                  No Entries Found
-                </div>
-              </Table.Cell>
-            </Table.Row>
-          )}
-        </Table.Body>
-      </Table>
-      {currentItems.length > itemsPerPage && (
-        <div className="flex justify-center gap-4 py-5 text-center">
+      <div className="space-y-4">
+        {currentItems.map((entry) => (
+          <ManagerEntryCard
+            key={entry._id}
+            entry={entry}
+            getEntries={getEntries}
+          />
+        ))}
+      </div>
+      {totalPage > 1 && (
+        <div className="mt-8 flex justify-center gap-2">
           <button
-            className="rounded-xl bg-primary-500 p-2 px-5"
-            onClick={() => goToPrev()}
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            className="rounded-lg bg-white px-4 py-2 text-sm shadow transition-colors hover:bg-gray-50 dark:border dark:border-white/5 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             Prev
           </button>
-          {Array.from(Array(totalPage).keys()).map((index) => (
-            <p
-              className={`py-0.1 mt-2 flex cursor-pointer items-center justify-center rounded-full px-3 ${
-                currentPage == index + 1 && "bg-primary-400"
-              }`}
-              onClick={() => setCurrentPage(index + 1)}
-            >
-              {index + 1}
-            </p>
-          ))}
           <button
-            className="rounded-xl bg-primary-500 p-2 px-5"
-            onClick={() => goToNext()}
+            onClick={() => setCurrentPage((p) => Math.min(totalPage, p + 1))}
+            className="rounded-lg bg-white px-4 py-2 text-sm shadow transition-colors hover:bg-gray-50 dark:border dark:border-white/5 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             Next
           </button>
         </div>
       )}
     </>
+  );
+};
+
+const ManagerEntryCard: FC<{ entry: any; getEntries: () => void }> = ({
+  entry,
+  getEntries,
+}) => {
+  const isPaid = entry.payment_status === "paid";
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-gray-200/70 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-white/5 dark:bg-gray-800/50 dark:backdrop-blur-sm">
+      <div
+        className={`absolute inset-y-0 left-0 w-1 ${
+          isPaid ? "bg-green-500" : "bg-red-500"
+        }`}
+      />
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="rounded-xl bg-blue-50 p-2 dark:bg-blue-500/10">
+            <HiUser className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          </div>
+          <div>
+            <p className="text-base font-bold text-gray-900 dark:text-white">
+              {entry.name}
+            </p>
+            <Badge color={isPaid ? "success" : "failure"} className="mt-1">
+              {entry.payment_status}
+            </Badge>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <EditManagerEntryModal
+            entry={entry}
+            entryId={entry._id}
+            getEntries={getEntries}
+          />
+          <DeleteManagerEntryModal
+            entryId={entry._id}
+            getEntries={getEntries}
+          />
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="rounded-xl bg-gray-50 p-2.5 dark:bg-gray-700/30">
+          <p className="text-[10px] font-bold text-gray-400">SALE (USD)</p>
+          <p className="text-sm font-bold">
+            ${Number(entry.total_sale_usd).toLocaleString()}
+          </p>
+        </div>
+        <div className="rounded-xl bg-gray-50 p-2.5 dark:bg-gray-700/30">
+          <p className="text-[10px] font-bold text-gray-400">SALE (INR)</p>
+          <p className="text-sm font-bold">
+            ₹{Number(entry.total_sale_inr).toLocaleString()}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 
