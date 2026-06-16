@@ -1,14 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Breadcrumb, Button } from "flowbite-react";
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
   HiHome,
-  HiCalendar,
   HiArrowRight,
   HiOutlineArchive,
-  HiPencilAlt,
-  HiTrash,
+  HiCurrencyDollar,
+  HiCash,
 } from "react-icons/hi";
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
 import "react-calendar/dist/Calendar.css";
@@ -42,6 +40,15 @@ const AllManagerEntriesPage: FC = function () {
     }
     setLoading(false);
   }, []);
+
+  const totals = dateRecords.reduce(
+    (acc, curr) => ({
+      saleUsd: acc.saleUsd + (Number(curr.total_sale_usd) || 0),
+      saleInr: acc.saleInr + (Number(curr.total_sale_inr) || 0),
+      costing: acc.costing + (Number(curr.costing_inr) || 0),
+    }),
+    { saleUsd: 0, saleInr: 0, costing: 0 },
+  );
 
   const getDateRecordsByDateRange = useCallback(async () => {
     setLoading(true);
@@ -91,6 +98,36 @@ const AllManagerEntriesPage: FC = function () {
           </div>
         </div>
 
+        {/* Summary Header for Managers */}
+        {!loading && dateRecords.length > 0 && (
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
+            <div className="rounded-3xl border border-blue-100 bg-blue-50/30 p-5 dark:border-blue-900/20 dark:bg-blue-900/10">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">
+                Total Sale (USD)
+              </p>
+              <p className="mt-1 text-2xl font-black text-blue-700 dark:text-blue-400">
+                ${totals.saleUsd.toLocaleString()}
+              </p>
+            </div>
+            <div className="rounded-3xl border border-gray-100 bg-gray-50/50 p-5 dark:border-white/5 dark:bg-gray-800/40">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                Total Sale (INR)
+              </p>
+              <p className="mt-1 text-2xl font-black text-gray-900 dark:text-white">
+                ₹{totals.saleInr.toLocaleString()}
+              </p>
+            </div>
+            <div className="rounded-3xl border border-gray-100 bg-gray-50/50 p-5 dark:border-white/5 dark:bg-gray-800/40 col-span-2 lg:col-span-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                Total Costing
+              </p>
+              <p className="mt-1 text-2xl font-black text-gray-900 dark:text-white">
+                ₹{totals.costing.toLocaleString()}
+              </p>
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
@@ -123,9 +160,9 @@ const AllManagerEntriesPage: FC = function () {
                       : "bg-green-500"
                   }`}
                 />
-                <div className="flex flex-col gap-6 p-5 pl-8 md:p-6 md:pl-10 lg:flex-row lg:items-center lg:gap-8 xl:gap-12">
-                  <div className="lg:w-40 xl:w-48">
-                    <p className="text-sm font-black text-gray-900 dark:text-white md:text-lg">
+                <div className="flex flex-col gap-6 p-5 pl-8 md:p-6 md:pl-10 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="lg:w-36 xl:w-48">
+                    <p className="text-sm font-black text-gray-900 dark:text-white md:text-lg lg:text-base xl:text-lg">
                       {dateFormat(record.date, "dd mmm yyyy")}
                     </p>
                     <div className="mt-1.5 flex items-center gap-2">
@@ -142,25 +179,28 @@ const AllManagerEntriesPage: FC = function () {
                       </p>
                     </div>
                   </div>
-                  <div className="grid flex-1 grid-cols-2 gap-3 md:grid-cols-3 lg:gap-4 xl:gap-8">
+                  <div className="grid flex-1 grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-3">
                     <StatCell
                       label="Sale (USD)"
                       value={`$${Number(
                         record.total_sale_usd,
                       ).toLocaleString()}`}
+                      icon={<HiCurrencyDollar className="h-3.5 w-3.5" />}
                     />
                     <StatCell
                       label="Sale (INR)"
                       value={`₹${Number(
                         record.total_sale_inr,
                       ).toLocaleString()}`}
+                      icon={<HiCash className="h-3.5 w-3.5" />}
                     />
                     <StatCell
                       label="Costing"
                       value={`₹${Number(record.costing_inr).toLocaleString()}`}
+                      icon={<HiOutlineArchive className="h-3.5 w-3.5" />}
                     />
                   </div>
-                  <div className="flex items-center justify-end gap-2 border-t border-gray-50 pt-4 lg:ml-auto lg:border-0 lg:pt-0">
+                  <div className="flex items-center justify-end gap-2 border-t border-gray-50 pt-4 lg:ml-6 lg:border-0 lg:pt-0">
                     <button
                       onClick={() =>
                         navigate(
@@ -194,13 +234,22 @@ const AllManagerEntriesPage: FC = function () {
   );
 };
 
-const StatCell: FC<{ label: string; value: string }> = ({ label, value }) => {
+const StatCell: FC<{
+  label: string;
+  value: string;
+  icon?: React.ReactNode;
+}> = ({ label, value, icon }) => {
   return (
-    <div className="rounded-xl bg-gray-50/50 p-3 ring-1 ring-inset ring-gray-100 transition-all dark:bg-gray-800/40 dark:ring-white/5 md:p-4">
-      <p className="text-[8px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 sm:text-[9px]">
-        {label}
-      </p>
-      <p className="mt-1 text-xs font-black tabular-nums tracking-tight text-gray-900 dark:text-gray-100 sm:text-sm lg:text-base">
+    <div className="rounded-xl bg-gray-50/50 p-3 ring-1 ring-inset ring-gray-100 transition-all dark:bg-gray-800/40 dark:ring-white/5 sm:p-4">
+      <div className="flex items-center gap-1.5 mb-1">
+        {icon && (
+          <span className="text-gray-400 dark:text-gray-500">{icon}</span>
+        )}
+        <p className="text-[8px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 sm:text-[9px]">
+          {label}
+        </p>
+      </div>
+      <p className="text-xs font-black tabular-nums tracking-tight text-gray-900 dark:text-gray-100 sm:text-sm lg:text-base">
         {value}
       </p>
     </div>

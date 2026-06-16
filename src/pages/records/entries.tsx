@@ -131,7 +131,7 @@ const EntriesPage: FC = function () {
         </nav>
 
         {/* ── Page Header ────────────────────────────────────────────────── */}
-        <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-start sm:justify-between">
+        <div className="mb-5 flex justify-between gap-3 sm:mb-6 sm:items-start">
           <div>
             <div className="mb-1 flex items-center gap-2">
               <HiCalendar className="h-5 w-5 shrink-0 text-blue-500" />
@@ -150,6 +150,10 @@ const EntriesPage: FC = function () {
           <div className="sm:shrink-0">
             <AddEntryModal getEntries={getEntries} />
           </div>
+        </div>
+        {/* ── Search Bar ─────────────────────────────────────────────────── */}
+        <div className="mb-5 rounded-2xl border border-gray-200/70 bg-white px-4 py-3 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:mb-6">
+          <SearchEntries setEntries={setEntries} />
         </div>
 
         {/* ── Stat Cards ─────────────────────────────────────────────────── */}
@@ -192,11 +196,6 @@ const EntriesPage: FC = function () {
             /* balance the grid when it's in 2 or 3 columns */
             className="col-span-2 sm:col-span-1 md:col-span-2 xl:col-span-1"
           />
-        </div>
-
-        {/* ── Search Bar ─────────────────────────────────────────────────── */}
-        <div className="mb-5 rounded-2xl border border-gray-200/70 bg-white px-4 py-3 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:mb-6">
-          <SearchEntries setEntries={setEntries} />
         </div>
 
         {/* ── Entries List ───────────────────────────────────────────────── */}
