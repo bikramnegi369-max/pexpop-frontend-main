@@ -19,30 +19,30 @@ interface DateRecord {
   total_agent_commission: number;
 }
 
-function getMonthRange(year: number, month: number) {
-  const m = month - 1;
-  const fmt = (d: Date) =>
-    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-      d.getDate()
-    ).padStart(2, "0")}`;
+function getLast30DaysRange() {
+  const end = new Date();
+  // Normalize end to the very end of today
+  end.setHours(23, 59, 59, 999);
+
+  const start = new Date(end);
+  // Subtract 29 days to get a total of 30 days inclusive of today
+  start.setDate(start.getDate() - 29);
+  // Normalize start to the very beginning of that day
+  start.setHours(0, 0, 0, 0);
+
   return {
-    firstDay: fmt(new Date(year, m, 1)),
-    lastDay: fmt(new Date(year, m + 1, 0)),
+    start,
+    end,
   };
 }
 
 const DashboardPage: FC = function () {
-  const today = new Date();
-  const { firstDay, lastDay } = getMonthRange(
-    today.getFullYear(),
-    today.getMonth() + 1
-  );
-
+  const range = getLast30DaysRange();
   const [dateRecords, setDateRecords] = useState<DateRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectionRange, setSelectionRange] = useState({
-    startDate: new Date(firstDay),
-    endDate: new Date(lastDay),
+    startDate: range.start,
+    endDate: range.end,
     key: "selection",
   });
 
@@ -53,7 +53,7 @@ const DashboardPage: FC = function () {
         const from = dateFormat(selectionRange.startDate, "yyyy-mm-dd");
         const to = dateFormat(selectionRange.endDate, "yyyy-mm-dd");
         const res = await api.get(
-          `/auth/date-by-date-range/?from=${from}&to=${to}`
+          `/auth/date-by-date-range/?from=${from}&to=${to}`,
         );
         setDateRecords(res.data.status === "success" ? res.data.data : []);
       } finally {
@@ -71,7 +71,7 @@ const DashboardPage: FC = function () {
       profit: acc.profit + curr.total_profit,
       commission: acc.commission + curr.total_agent_commission,
     }),
-    { usd: 0, inr: 0, costing: 0, profit: 0, commission: 0 }
+    { usd: 0, inr: 0, costing: 0, profit: 0, commission: 0 },
   );
 
   return (

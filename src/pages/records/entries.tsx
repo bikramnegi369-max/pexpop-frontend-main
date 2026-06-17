@@ -73,16 +73,16 @@ const EntriesPage: FC = function () {
 
         const totalUsd = entryList.reduce(
           (a: number, b: any) => a + (Number(b.total_sale_usd) || 0),
-          0
+          0,
         );
         const totalInr = entryList.reduce(
           (a: number, b: any) => a + (Number(b.total_sale_inr) || 0),
-          0
+          0,
         );
         const totalCosting = Number(res.data.dateRecord?.costing_inr) || 0;
         const totalCommission = entryList.reduce(
           (a: number, b: any) => a + (Number(b.agent_commission_inr) || 0),
-          0
+          0,
         );
         const totalProfit = totalInr - (totalCosting + totalCommission);
 
@@ -271,7 +271,7 @@ const EntriesList: FC<EntriesListProps> = ({
   const totalPage = Math.ceil(entries.length / itemsPerPage);
   const currentItems = entries.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   // Reset to page 1 when entries change (e.g. after search)
@@ -398,7 +398,10 @@ const EntryCard: FC<{ entry: any; getEntries: () => void }> = ({
             value={`₹${Number(entry.agent_commission_inr).toLocaleString()}`}
             valueClass="text-yellow-600 dark:text-yellow-400"
           />
-          <MiniStat label="Agent %" value={`${entry.agent_commission}%`} />
+          <MiniStat
+            label="Agent (INR/USD)"
+            value={`₹${Number(entry.agent_commission).toLocaleString()}`}
+          />
         </div>
 
         {/* ── Net Profit Block ───────────────────────────────────────────── */}
@@ -457,7 +460,7 @@ const EntryCard: FC<{ entry: any; getEntries: () => void }> = ({
                 {s.rate}
               </span>
             </div>
-          ) : null
+          ) : null,
         )}
       </div>
     </div>
