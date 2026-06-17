@@ -13,6 +13,7 @@ import {
   HiArrowRight,
   HiHome,
   HiCurrencyDollar,
+  HiUserGroup,
   HiCash,
   HiTrendingUp,
   HiOutlineArchive,
@@ -47,7 +48,7 @@ function getMonthRange(year: number, month: number) {
   const m = month - 1;
   const fmt = (d: Date) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-      d.getDate()
+      d.getDate(),
     ).padStart(2, "0")}`;
   return {
     firstDay: fmt(new Date(year, m, 1)),
@@ -59,7 +60,7 @@ const DateRecordPage: FC = function () {
   const today = new Date();
   const { firstDay, lastDay } = getMonthRange(
     today.getFullYear(),
-    today.getMonth() + 1
+    today.getMonth() + 1,
   );
   const navigate = useNavigate();
 
@@ -78,8 +79,9 @@ const DateRecordPage: FC = function () {
       saleInr: acc.saleInr + (Number(curr.total_sale_inr) || 0),
       costing: acc.costing + (Number(curr.costing_inr) || 0),
       profit: acc.profit + (Number(curr.total_profit) || 0),
+      commission: acc.commission + (Number(curr.total_agent_commission) || 0),
     }),
-    { saleUsd: 0, saleInr: 0, costing: 0, profit: 0 }
+    { saleUsd: 0, saleInr: 0, costing: 0, profit: 0, commission: 0 },
   );
 
   const getDateRecords = useCallback(async () => {
@@ -88,7 +90,7 @@ const DateRecordPage: FC = function () {
       const from = dateFormat(selectionRange.startDate, "yyyy-mm-dd");
       const to = dateFormat(selectionRange.endDate, "yyyy-mm-dd");
       const res = await api.get(
-        `/auth/date-by-date-range/?from=${from}&to=${to}`
+        `/auth/date-by-date-range/?from=${from}&to=${to}`,
       );
       setDateRecords(res.data.status === "success" ? res.data.data : []);
     } finally {
@@ -141,7 +143,7 @@ const DateRecordPage: FC = function () {
 
         {/* ── Summary Cards ─────────────────────────────────────────────── */}
         {!loading && dateRecords.length > 0 && (
-          <div className="mb-5 grid grid-cols-2 gap-3 sm:mb-6 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
+          <div className="mb-5 grid grid-cols-2 gap-3 sm:mb-6 sm:gap-4 md:grid-cols-3 xl:grid-cols-5">
             <StatCard
               label="Period Sale (USD)"
               value={totals.saleUsd}
@@ -164,13 +166,20 @@ const DateRecordPage: FC = function () {
               color="red"
             />
             <StatCard
+              label="Period Commission"
+              value={totals.commission}
+              prefix="₹"
+              icon={<HiUserGroup />}
+              color="yellow"
+            />
+            <StatCard
               label="Period Profit"
               value={totals.profit}
               prefix="₹"
               icon={<HiTrendingUp />}
               color={totals.profit >= 0 ? "green" : "red"}
               /* balance the grid when it's in 3 columns */
-              className="md:col-span-3 xl:col-span-1"
+              className="col-span-2 sm:col-span-1 md:col-span-2 xl:col-span-1"
             />
           </div>
         )}
@@ -265,7 +274,7 @@ const DateRecordCard: FC<{
             <button
               onClick={() =>
                 navigate(
-                  `/entries-by-date/${dateFormat(record.date, "dd-mmm-yyyy")}`
+                  `/entries-by-date/${dateFormat(record.date, "dd-mmm-yyyy")}`,
                 )
               }
               className="flex h-9 items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-3 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm transition-all hover:bg-blue-700 active:scale-95"
@@ -300,8 +309,8 @@ const DateRecordCard: FC<{
             value={`₹${Number(record.costing_inr).toLocaleString()}`}
           />
           <MiniStat
-            label="Pending"
-            value={String(record.total_pending_entries)}
+            label="Commission"
+            value={`₹${Number(record.total_agent_commission).toLocaleString()}`}
             valueClass={
               hasPending ? "text-red-600 dark:text-red-400" : undefined
             }
