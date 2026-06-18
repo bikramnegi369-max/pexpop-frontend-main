@@ -28,7 +28,7 @@ const App = () => {
           <Route
             path="/"
             element={
-              cookies.token ? (
+              cookies['token'] ? (
                 <DashboardPage />
               ) : (
                 <Navigate to="/auth/sign-in" />

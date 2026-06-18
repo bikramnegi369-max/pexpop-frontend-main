@@ -5,12 +5,9 @@ import { useEffect, useState, useCallback } from "react";
 import {
   HiHome,
   HiCash,
-  HiTrendingUp,
   HiCurrencyDollar,
   HiUser,
   HiOutlineArchive,
-  HiChevronLeft,
-  HiChevronRight,
   HiCalendar,
 } from "react-icons/hi";
 import NavbarSidebarLayout from "../../layouts/navbar-sidebar";
@@ -63,7 +60,7 @@ const ManagerEntriesPage: FC = function () {
     setLoading(true);
     try {
       const res = await api.get(
-        `/manager/entries-by-date?date=${formatedDate}`
+        `/manager/entries-by-date?date=${formatedDate}`,
       );
       if (res.data.status === "success") {
         const entryList = res.data.dateRecord?.entries || [];
@@ -71,11 +68,11 @@ const ManagerEntriesPage: FC = function () {
         setStats({
           totalUsd: entryList.reduce(
             (a: number, b: any) => a + (Number(b.total_sale_usd) || 0),
-            0
+            0,
           ),
           totalInr: entryList.reduce(
             (a: number, b: any) => a + (Number(b.total_sale_inr) || 0),
-            0
+            0,
           ),
           costing: Number(res.data.dateRecord?.costing_inr) || 0,
         });
@@ -223,7 +220,7 @@ const ManagerEntriesList: FC<{
   const totalPage = Math.ceil(entries.length / itemsPerPage);
   const currentItems = entries.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   if (loading)
